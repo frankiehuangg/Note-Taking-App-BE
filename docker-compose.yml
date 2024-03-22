@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  nta-be:
+    container_name: nta-be
+    hostname: nta-be
+    build: .
+    ports:
+      - "5000:${BE_PORT}"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    networks:
+      - nta-be-service
+    depends_on:
+      nta-db:
+        condition: service_healthy
+    restart: on-failure
+
+  nta-db:
+    container_name: nta-db
+    image: mongo
+    volumes:
+      - nta-volumes:/data/db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - '27017:${DB_PORT}'
+    networks:
+      - nta-be-service
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo-express:
+    container_name: nta-db-watcher
+    image: mongo-express
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: nta-db
+      ME_CONFIG_MONGODB_PORT: 27017
+    ports:
+      - "8081:${ME_PORT}"
+    networks:
+      - nta-be-service
+    depends_on:
+      nta-db:
+        condition: service_healthy
+
+volumes:
+  nta-volumes:
+
+networks:
+  nta-be-service:
