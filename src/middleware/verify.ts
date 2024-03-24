@@ -8,7 +8,7 @@ const Verify = async (req: express.Request, res: express.Response, next: express
         const authHeader = req.headers['cookie']
         if (!authHeader) return res.sendStatus(401)
 
-        const cookie = authHeader.split('=')[1]
+        const cookie = authHeader.split(';').find(pair => pair.includes('SessionID=')).split('=')[1]
         const accessToken = cookie.split(';')[0]
         const isBlacklisted = await BlacklistSchema.findOne({token: accessToken})
         if (isBlacklisted) {
