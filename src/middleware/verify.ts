@@ -1,7 +1,5 @@
 import jwt from "jsonwebtoken";
 import express from "express";
-
-import UserSchema from '../models/dao/user'
 import BlacklistSchema from '../models/dao/blacklist'
 import constants from "../constants/constants";
 
@@ -26,9 +24,10 @@ const Verify = async (req: express.Request, res: express.Response, next: express
                     .json({'message': 'This session has expired'})
             }
 
-            const user = UserSchema.findById(decoded)
             // @ts-expect-error This is ensured
-            req.user = user.toString()
+            const {id} = decoded
+
+            req.body.userID = id
             next()
         })
     } catch (err) {
