@@ -53,7 +53,7 @@ router.patch('/note',
     UpdateNote
 )
 
-router.delete('/note',
+router.delete('/note/:id',
     check('id')
         .not()
         .isEmpty()
