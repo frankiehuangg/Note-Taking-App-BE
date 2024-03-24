@@ -31,7 +31,3 @@ export interface PatchUpdateNoteRequest {
 export interface PatchUpdateNoteResponse {
     note: Note
 }
-
-export interface DeleteRemoveNoteRequest {
-    id: string
-}
