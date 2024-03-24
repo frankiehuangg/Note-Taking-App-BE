@@ -2,6 +2,7 @@ import express from 'express'
 
 import constants from '../constants/constants'
 import Auth from './auth'
+import Note from './note'
 import Verify from "../middleware/verify";
 
 const app = express()
@@ -19,5 +20,7 @@ app.get('/api/v1/user', Verify, (req: express.Request, res: express.Response) =>
 })
 
 app.use('/api/v1', Auth)
+
+app.use('/api/v1', Note)
 
 export default app
