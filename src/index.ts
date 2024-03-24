@@ -1,3 +1,4 @@
+import session from 'express-session'
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -10,7 +11,14 @@ import mongoose from "mongoose";
 const server = express()
 
 // Header information
-server.use(cors())
+server.use(cors({
+    origin: [
+        'http://localhost:5173',
+        'https://localhost:5173',
+    ],
+    credentials: true,
+    exposedHeaders: ['set-cookie']
+}))
 server.disable('x-powered-by')
 server.use(cookieParser())
 server.use(express.urlencoded({extended: false}))
