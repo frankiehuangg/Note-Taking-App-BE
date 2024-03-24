@@ -3,16 +3,16 @@ import bcrypt from "bcrypt";
 
 import UserSchema from '../../models/dao/user'
 import {PostLoginUserRequest} from "../../models/dto/user"
+import constants from "../../constants/constants";
 
 const Login = async (req: express.Request, res: express.Response) => {
-    const {email}: PostLoginUserRequest = req.body;
+    const {email}: PostLoginUserRequest = req.body
 
     try {
         const user = await UserSchema.findOne({email}).select('+password')
         if (!user) {
             return res.status(401).json({
                 status: 'failed',
-                data: [],
                 message: 'Invalid email or password'
             })
         }
@@ -21,16 +21,15 @@ const Login = async (req: express.Request, res: express.Response) => {
         if (!isPasswordValid) {
             return res.status(401).json({
                 status: 'failed',
-                data: [],
                 message: 'Invalid email or password'
             })
         }
 
         const options: CookieOptions = {
-            maxAge: 20 * 60 * 60,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none'
+            maxAge: 60 * 60 * 6000,
+            httpOnly: constants.COOKIE_HTTP_ONLY === 'true',
+            secure: constants.COOKIE_SECURE === 'true',
+            sameSite: 'lax'
         }
 
         const token = user.generateAccessJWT()
@@ -44,8 +43,6 @@ const Login = async (req: express.Request, res: express.Response) => {
     } catch (err) {
         res.status(500).json({
             status: 'error',
-            code: 500,
-            data: [],
             message: 'Internal server error'  + err
         })
     }
