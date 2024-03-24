@@ -1,10 +1,9 @@
 import express from "express";
 
 import NoteSchema from '../../models/dao/note'
-import {DeleteRemoveNoteRequest} from "../../models/dto/note";
 
 const RemoveNote = async (req: express.Request, res: express.Response) => {
-    const {id}: DeleteRemoveNoteRequest  = req.body
+    const id  = req.params.id
 
     try {
         const result = await NoteSchema.findByIdAndDelete(id)
