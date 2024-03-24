@@ -5,7 +5,7 @@ import {GetRetrieveNoteResponse} from "../../models/dto/note";
 
 const RetrieveNote = async (req: express.Request, res: express.Response) => {
     try {
-        const userID = req.query.userID.toString()
+        const userID = req.body.userID
         const offset = parseInt(<string>req.query.offset)
         const size = parseInt(<string>req.query.size)
 
