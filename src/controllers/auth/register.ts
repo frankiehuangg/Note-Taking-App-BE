@@ -1,7 +1,8 @@
-import express from "express";
+import express, {CookieOptions} from "express";
 
 import UserSchema from '../../models/dao/user'
 import {PostRegisterUserRequest, PostRegisterUserResponse} from "../../models/dto/user";
+import constants from "../../constants/constants";
 
 const Register = async (req: express.Request, res: express.Response) => {
     const {first_name, last_name, email, password}: PostRegisterUserRequest = req.body
@@ -18,7 +19,6 @@ const Register = async (req: express.Request, res: express.Response) => {
         if (existingUser) {
             return res.status(400).json({
                 status: 'failed',
-                data: [],
                 message: 'Email has already been used'
             })
         }
@@ -29,6 +29,18 @@ const Register = async (req: express.Request, res: express.Response) => {
             last_name: savedUser.last_name,
             email: savedUser.email
         }
+
+        const options: CookieOptions = {
+            maxAge: 60 * 60 * 6000,
+            httpOnly: constants.COOKIE_HTTP_ONLY === 'true',
+            secure: constants.COOKIE_SECURE === 'true',
+            sameSite: 'none'
+        }
+
+        const token = savedUser.generateAccessJWT()
+        console.log(token)
+
+        res.cookie('SessionID', token, options)
         res.status(200).json({
             status: 'success',
             data: userData,
@@ -37,8 +49,6 @@ const Register = async (req: express.Request, res: express.Response) => {
     } catch (err) {
         res.status(500).json({
             status: 'error',
-            code: 500,
-            data: [],
             message: 'Internal server error'
         })
     }
