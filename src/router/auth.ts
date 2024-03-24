@@ -48,4 +48,4 @@ router.post('/logout',
     Logout
 )
 
-export default router;
+export default router

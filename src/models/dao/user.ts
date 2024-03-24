@@ -59,9 +59,7 @@ userSchema.methods.generateAccessJWT = function () {
         id: this._id.toString()
     }
 
-    return jwt.sign(payload, constants.SECRET_ACCESS_TOKEN, {
-        expiresIn: '20m',
-    })
+    return jwt.sign(payload, constants.SECRET_ACCESS_TOKEN)
 }
 
 export default mongoose.model('users', userSchema)
